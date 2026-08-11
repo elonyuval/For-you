@@ -10,3 +10,4 @@ node_modules
 .smiley.mjs
 .bidi.mjs
 .refresh.mjs
+_site
