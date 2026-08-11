@@ -21,29 +21,48 @@ npm run preview  # תצוגה מקדימה של הבילד
 
 ## פריסה
 
-דחיפה ל-`main` מפעילה את `.github/workflows/deploy.yml`, שבונה ומעלה ל-GitHub
-Pages. ה-workflow מדליק את Pages בעצמו בהרצה הראשונה (`enablement: true`),
-אז אין מה להגדיר ידנית. הכתובת: `https://<user>.github.io/for-you/`.
+האתר מוגש ב-GitHub Pages ישירות מענף `main`
+(Settings → Pages → Deploy from a branch → `main` / `(root)`).
+הכתובת: `https://elonyuval.github.io/For-you/`.
 
-`base` ב-`vite.config.js` הוא `'./'` — הבילד עובד גם מתת-נתיב של Pages וגם
-מכל אירוח אחר.
+לכן **הבילד מקומט לתוך הריפו**: המקורות יושבים ב-`app/`, ו-`npm run build`
+כותב `index.html` ו-`assets/` לשורש. כדי לפרסם שינוי:
+
+```bash
+npm run build
+git add -A && git commit -m "..." && git push
+```
+
+זה לא הסידור הכי אלגנטי — בדרך כלל לא מקמטים פלט בילד — אבל הוא היחיד
+שעובד בלי להחליף את מקור ה-Pages ל-"GitHub Actions". אם מחליפים בעתיד,
+אפשר להחזיר workflow שבונה ומעלה artifact, ולהוציא את `index.html`
+ו-`assets/` מהמעקב.
+
+`base` ב-`vite.config.js` הוא `'./'` — נתיבים יחסיים, כך שהבילד עובד גם
+מתת-הנתיב `/For-you/`, גם מכל אירוח אחר וגם מקובץ מקומי.
+
+`.nojekyll` בשורש מונע מ-Jekyll לעבד את התיקייה ולבלוע קבצים.
 
 ## מבנה
 
 ```
-src/
-  App.jsx              שלד: מערכה 1, מערכה 2, שכבת החגיגה
-  state/store.jsx      state מרכזי — שלב, השעה שנבחרה, celebration
-  scenes/
-    GiftStage.jsx      מערכה 1: ציר הזמן ה-scrubbed של פתיחת המתנה
-    InviteCard.jsx     כרטיס הברכה וכל השלבים שעליו
-    NoButton.jsx       כפתור "לא" הבורח
-    TimePicker.jsx     בחירת שעה
-    ChecklistStage.jsx מערכה 2: הרשימה, ההפוגה, והמנטוס
-    FinalScene.jsx     כרטיס הסיכום וסצנת הסיום
-  art/                 כל האיורים — SVG בלבד, בלי תמונות
-  fx/Petals.jsx        עלי ורדים על canvas
-  lib/viewport.js      safe-area ו-visual viewport
+index.html, assets/    פלט הבילד — מה ש-Pages מגיש. לא לערוך ידנית.
+app/
+  index.html           תבנית המקור
+  src/
+    App.jsx            שלד: מערכה 1, מערכה 2, שכבת החגיגה
+    config.js          מספר הוואטסאפ ונוסח ההודעה
+    state/store.jsx    state מרכזי — שלב, השעה שנבחרה, celebration
+    scenes/
+      GiftStage.jsx      מערכה 1: ציר הזמן ה-scrubbed של פתיחת המתנה
+      InviteCard.jsx     כרטיס הברכה וכל השלבים שעליו
+      NoButton.jsx       כפתור "לא" הבורח
+      TimePicker.jsx     בחירת שעה
+      ChecklistStage.jsx מערכה 2: הרשימה, ההפוגה, והמנטוס
+      FinalScene.jsx     כרטיס הסיכום וסצנת הסיום
+    art/               כל האיורים — SVG בלבד, בלי תמונות
+    fx/Petals.jsx      עלי ורדים על canvas
+    lib/viewport.js    safe-area ו-visual viewport
 ```
 
 ## החלטות שכדאי להכיר לפני שנוגעים
@@ -71,3 +90,6 @@ src/
 
 **`prefers-reduced-motion`:** אין scrub, אין particles, והמערכות נפרשות
 כדף גלילה רגיל (`.is-static`) כדי ששום תוכן לא יהיה תלוי באנימציה.
+
+**`emptyOutDir: false` ב-`vite.config.js` הוא קריטי.** ה-`outDir` הוא שורש
+הריפו; בלי הדגל הזה בילד היה מוחק את `app/`, את `package.json` ואת כל השאר.
