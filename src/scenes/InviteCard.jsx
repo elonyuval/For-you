@@ -220,8 +220,10 @@ function Settled({ time, reduced }) {
       <p className="settled__when" data-fade>
         שישי ב־<bdi>{time}</bdi>
       </p>
+      {/* The lateness joke lives on the closing card now — this beat gets
+          its own line so it isn't told twice */}
       <p className="settled__note" ref={noteRef}>
-        בלי איחורים. ⏰
+        זהו, אין חזרה מזה. 😌
       </p>
     </div>
   );
