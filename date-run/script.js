@@ -37,6 +37,7 @@ const CONFIG = {
       { id: 'burger', emoji: '🍔', name: 'המבורגר', price: 35, note: 'בלי להתבייש עם הצ׳יפס, כן?' },
       { id: 'sushi', emoji: '🍣', name: 'סושי', price: 40, note: 'בחירה של מקצוענים.' },
       { id: 'dairy', emoji: '🍝', name: 'חלבי', price: 50, note: 'פסטה, פיצה וכל הדברים הטובים.' },
+      { id: 'standup', emoji: '🎤', name: 'בר וסטנדאפ', price: 70, note: 'מישהו אחר יצחיק אותך בשישי בלילה, ואני אשב ואקנא.' },
     ],
     /* נפתחת רק במאה מלאה, ולוקחת את כל התקציב */
     surprise: {
