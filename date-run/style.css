@@ -300,6 +300,12 @@ button {
   color: var(--text);
 }
 
+.howto__hint--penalty {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--pink-soft);
+}
+
 .howto__hint--small {
   margin-top: 10px;
   font-size: 13px;
@@ -390,10 +396,37 @@ button {
 }
 
 .hud__coins {
+  /* flex ב-RTL: הקנס נכנס משמאל למונה בלי להזיז אותו */
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   font-family: var(--arcade);
   font-size: 13px;
   color: var(--gold);
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* הקנס על פגיעה — צף למעלה ליד המונה ונעלם. direction: ltr כדי
+   שהמינוס יישאר לפני המספר ולא יתהפך. */
+.hud__delta {
+  direction: ltr;
+  color: #ff5b7f;
+  animation: hud-delta 0.9s ease-out forwards;
+}
+
+@keyframes hud-delta {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
 }
 
 .hud__bar {

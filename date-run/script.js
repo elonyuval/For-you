@@ -12,12 +12,13 @@ const CONFIG = {
 
   /* המשחק עצמו — מהירות, אורך, פיזיקה של הקפיצה */
   run: {
-    speed: 190, // יחידות לשנייה. יותר גדול = מהיר וקשה יותר
-    durationSec: 40, // אורך המסלול בשניות (בערך). 30–60 זה הטווח הנוח
+    speed: 210, // יחידות לשנייה. יותר גדול = מהיר וקשה יותר
+    durationSec: 27, // אורך המסלול בשניות (בערך)
     gravity: 2100, // כמה חזק מושכים אותה חזרה לקרקע
     jumpVelocity: 760, // עוצמת הקפיצה
     stumbleSec: 0.7, // כמה זמן היא מואטת אחרי פגיעה במכשול
     stumbleFactor: 0.5, // ומה המהירות באותו זמן (0.5 = חצי)
+    hitPenalty: 5, // כמה מטבעות יורדים על פגיעה במכשול. 0 = בלי קנס
   },
 
   /* פרטי הדייט */
@@ -70,6 +71,7 @@ const CONFIG = {
       tip: 'כדאי לך להשיג את כל ה־100. זה ישתלם 😉',
       hint: '📱 לחיצה על המסך = קפיצה',
       hintDesktop: '🖱️ במחשב: רווח או קליק',
+      penalty: (n) => `ופגיעה במכשול? מורידה לך ${n} מטבעות 😬`,
       go: 'הבנתי, יאללה',
     },
     finish: {
@@ -328,6 +330,8 @@ const CONFIG = {
       if (typeof value === 'string') el.textContent = value;
     });
     $('#hud-total').textContent = CONFIG.coinsTotal;
+    // הטקסטים שמכילים מספר מ-CONFIG נבנים כאן ולא דרך data-text
+    $('#howto-penalty').textContent = T.howto.penalty(CONFIG.run.hitPenalty);
   }
 
   /* חלונית הודעה אחת שמשרתת את כל הודעות החנות */
@@ -400,8 +404,10 @@ const CONFIG = {
       const flight = (2 * jumpVelocity) / gravity; // משך קפיצה מלאה
       const arcSpan = speed * flight;
       const arcAt = [0.28, 0.39, 0.5, 0.61, 0.72]; // איפה על הקשת יושבים המטבעות
-      const rowGap = 40;
-      const rowMax = 6;
+      // שורות ארוכות וצפופות עולות מעט מאוד זמן, בניגוד לרווחים ביניהן —
+      // ככה נכנסות כל המאה למסלול קצר בלי שהוא ירגיש דחוס.
+      const rowGap = 36;
+      const rowMax = 10;
 
       const total = CONFIG.coinsTotal;
       const arcs = Math.max(1, Math.floor((total * 0.4) / arcAt.length));
@@ -427,11 +433,11 @@ const CONFIG = {
       }
 
       const lenOf = (gr) => (gr.type === 'row' ? (gr.n - 1) * rowGap : arcSpan);
-      const lead = 480; // ריצה שקטה בהתחלה
-      const tail = 620; // ריצה שקטה לפני קו הסיום
+      const lead = 400; // ריצה שקטה בהתחלה
+      const tail = 500; // ריצה שקטה לפני קו הסיום
       const groupsLen = groups.reduce((sum, gr) => sum + lenOf(gr), 0);
       const gapCount = Math.max(1, groups.length - 1);
-      const gap = Math.max(160, (speed * durationSec - groupsLen - lead - tail) / gapCount);
+      const gap = Math.max(120, (speed * durationSec - groupsLen - lead - tail) / gapCount);
 
       const coins = [];
       const obstacles = [];
@@ -594,6 +600,13 @@ const CONFIG = {
             g.invuln = 1;
             g.shake = 0.35;
             g.comboStreak = 0;
+            // הקנס: פסילה מורידה מטבעות, אבל אף פעם לא מתחת לאפס
+            const lost = Math.min(g.collected, CONFIG.run.hitPenalty);
+            if (lost > 0) {
+              g.collected -= lost;
+              updateHud();
+              showPenalty(lost);
+            }
             Sound.bump();
             toast(T.toasts.hit[g.hitIndex++ % T.toasts.hit.length], true);
             break;
@@ -620,6 +633,15 @@ const CONFIG = {
         g.comboStreak = 0;
         toast(T.toasts.combo);
       }
+    }
+
+    /* "5-" קטן שעולה מתחת למונה, כדי שהקנס יורגש ולא רק ייספר */
+    function showPenalty(n) {
+      const chip = document.createElement('span');
+      chip.className = 'hud__delta';
+      chip.textContent = `-${n}`;
+      $('.hud__coins').appendChild(chip);
+      setTimeout(() => chip.remove(), 900);
     }
 
     function updateHud() {
