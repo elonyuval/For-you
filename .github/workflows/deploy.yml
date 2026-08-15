@@ -41,6 +41,9 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -r assets _site/
+          # DATE RUN is static and does not go through the build — it just
+          # rides along, so /date-run/ works in this mode too.
+          cp -r date-run _site/
           touch _site/.nojekyll
 
       # No `enablement: true` here: the workflow token is not allowed to
