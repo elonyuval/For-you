@@ -1,0 +1,954 @@
+/* ==================================================================
+   DATE RUN — עיצוב
+   ארקייד מודרני, לילה ורוד, מובייל-פירסט (ובעיקר אייפון).
+   כל הצבעים והמידות המשותפים יושבים ב-:root למטה.
+   ================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #12071f;
+  --bg-2: #1e0a33;
+  --card: rgba(255, 255, 255, 0.06);
+  --card-line: rgba(255, 255, 255, 0.12);
+
+  --pink: #ff2d78;
+  --pink-soft: #ff9ec4;
+  --pink-deep: #b3155a;
+  --gold: #ffc93c;
+  --gold-deep: #c98a10;
+  --mint: #5ce0c6;
+
+  --text: #fff2e9;
+  --muted: #c6a9dc;
+
+  --arcade: 'Press Start 2P', 'Courier New', monospace;
+  --sans: 'Heebo', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  /* Safe areas של האייפון — משמשות כריפוד תחתון/עליון בכל מסך */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+
+  --radius: 20px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  /* בלי גלילה אופקית ובלי bounce של iOS על הדף עצמו */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: radial-gradient(120% 90% at 50% 0%, #2a0f3f 0%, var(--bg) 62%);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  border: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  /* מבטל את השהיית ה-300ms והזום בדאבל-טאפ באייפון */
+  touch-action: manipulation;
+}
+
+/* ------------------------------------------------------------------
+   המסגרת
+------------------------------------------------------------------ */
+.app {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 100vh;
+  height: 100dvh; /* Safari מובייל: הגובה האמיתי, בלי קפיצות של הבר */
+  margin: 0 auto;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1b0a2e 0%, var(--bg) 100%);
+  box-shadow: 0 0 80px rgba(255, 45, 120, 0.18);
+}
+
+/* ------------------------------------------------------------------
+   מסכים — רק אחד פעיל, המעבר ביניהם הוא fade + scale קטן
+------------------------------------------------------------------ */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: calc(18px + var(--safe-t)) 18px calc(20px + var(--safe-b));
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.985);
+  transition: opacity 0.36s ease, transform 0.36s ease, visibility 0.36s;
+}
+
+.screen.is-on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.screen--scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ------------------------------------------------------------------
+   טיפוגרפיה משותפת
+------------------------------------------------------------------ */
+.title {
+  margin: 0;
+  font-size: clamp(24px, 7vw, 32px);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.title--arcade {
+  font-family: var(--arcade);
+  font-size: clamp(15px, 5.2vw, 22px);
+  line-height: 1.6;
+  color: var(--gold);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* ------------------------------------------------------------------
+   כפתורים
+------------------------------------------------------------------ */
+.btn {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(180deg, #ff6fa2 0%, var(--pink) 100%);
+  box-shadow: 0 6px 0 var(--pink-deep), 0 16px 30px -12px rgba(255, 45, 120, 0.7);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.2s ease;
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--pink-deep), 0 8px 18px -12px rgba(255, 45, 120, 0.7);
+}
+
+.btn[disabled] {
+  filter: grayscale(0.7) brightness(0.7);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  cursor: default;
+}
+
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+  color: var(--text);
+}
+
+/* ------------------------------------------------------------------
+   מסך פתיחה
+------------------------------------------------------------------ */
+.screen--start {
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  background:
+    radial-gradient(90% 55% at 50% 28%, rgba(255, 45, 120, 0.28) 0%, rgba(18, 7, 31, 0) 70%),
+    linear-gradient(180deg, #250c3d 0%, #12071f 100%);
+}
+
+.start__middle {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+}
+
+.logo {
+  margin: 0;
+  font-family: var(--arcade);
+  font-size: clamp(34px, 15vw, 58px);
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(255, 45, 120, 0.9), 0 0 34px rgba(255, 45, 120, 0.55),
+    0 6px 0 var(--pink-deep);
+}
+
+.logo__line {
+  display: block;
+}
+
+.logo__line--2 {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255, 201, 60, 0.85), 0 0 34px rgba(255, 201, 60, 0.45),
+    0 6px 0 var(--gold-deep);
+}
+
+.logo__icons {
+  margin: 0;
+  font-size: clamp(20px, 6vw, 26px);
+  letter-spacing: 0.35em;
+  /* המרווח ב-letter-spacing נדחף לצד אחד — מאזנים אותו חזרה */
+  padding-inline-start: 0.35em;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.btn--start {
+  max-width: 280px;
+  font-family: var(--arcade);
+  font-size: clamp(16px, 5vw, 20px);
+  letter-spacing: 0.08em;
+  animation: pulse 1.9s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 6px 0 var(--pink-deep), 0 16px 30px -12px rgba(255, 45, 120, 0.7);
+  }
+  50% {
+    transform: scale(1.045);
+    box-shadow: 0 6px 0 var(--pink-deep), 0 22px 46px -12px rgba(255, 45, 120, 0.95);
+  }
+}
+
+.tagline {
+  margin: 0;
+  /* טקסט לטיני בתוך דף RTL — בלי זה הנקודה קופצת לתחילת השורה */
+  direction: ltr;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------------
+   מסך הוראות
+------------------------------------------------------------------ */
+.howto__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.panel {
+  padding: 18px;
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.panel__lead {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.panel--tip {
+  border-color: rgba(255, 201, 60, 0.35);
+  background: rgba(255, 201, 60, 0.1);
+}
+
+.tip__label {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.tip__text {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.howto__demo {
+  text-align: center;
+}
+
+.howto__hint {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.howto__hint--small {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* הדגמה קטנה: דמות שקופצת ומטבע שמרחף.
+   direction: ltr כי במשחק רצים שמאלה→ימינה, גם בתוך דף RTL. */
+.demo {
+  position: relative;
+  direction: ltr;
+  height: 74px;
+  margin: 10px 0 2px;
+}
+
+.demo__runner,
+.demo__coin {
+  position: absolute;
+  bottom: 12px;
+  font-size: 30px;
+}
+
+.demo__runner {
+  inset-inline-start: 22%;
+  animation: demo-jump 1.6s ease-in-out infinite;
+}
+
+.demo__coin {
+  inset-inline-start: 58%;
+  bottom: 40px;
+  animation: demo-float 1.6s ease-in-out infinite;
+}
+
+.demo__floor {
+  position: absolute;
+  inset-inline: 8%;
+  bottom: 8px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+}
+
+/* scaleX(-1): באייפון האימוג'י של הריצה פונה שמאלה, וכאן רצים ימינה */
+@keyframes demo-jump {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0) scaleX(-1);
+  }
+  25% {
+    transform: translateY(-30px) scaleX(-1);
+  }
+}
+
+@keyframes demo-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ------------------------------------------------------------------
+   המשחק
+------------------------------------------------------------------ */
+.screen--game {
+  padding: 0;
+  gap: 0;
+}
+
+.game-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.hud {
+  position: absolute;
+  inset-block-start: calc(12px + var(--safe-t));
+  inset-inline: 16px;
+  pointer-events: none;
+}
+
+.hud__coins {
+  font-family: var(--arcade);
+  font-size: 13px;
+  color: var(--gold);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.hud__bar {
+  height: 6px;
+  /* המסלול מתקדם שמאלה→ימינה, ולכן גם הפס. והוא מתחיל אחרי כפתור הסאונד. */
+  direction: ltr;
+  margin-top: 8px;
+  margin-left: 46px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.hud__bar i {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--pink), var(--gold));
+  transition: width 0.1s linear;
+}
+
+/* טוסט ההומור באמצע המשחק */
+.toast {
+  position: absolute;
+  inset-inline: 24px;
+  inset-block-start: calc(78px + var(--safe-t));
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(20, 8, 34, 0.92);
+  border: 1px solid rgba(255, 158, 196, 0.35);
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.8);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.96);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.toast.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   מסך סיום
+------------------------------------------------------------------ */
+.screen--finish {
+  text-align: center;
+  background:
+    radial-gradient(90% 55% at 50% 30%, rgba(255, 201, 60, 0.18) 0%, rgba(18, 7, 31, 0) 70%),
+    linear-gradient(180deg, #250c3d 0%, #12071f 100%);
+}
+
+.finish__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.finish__title {
+  margin: 0;
+  direction: ltr;
+  font-family: var(--arcade);
+  font-size: clamp(22px, 8vw, 34px);
+  color: #fff;
+  text-shadow: 0 0 14px rgba(255, 45, 120, 0.8), 0 5px 0 var(--pink-deep);
+}
+
+.finish__score {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.perfect {
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 201, 60, 0.5);
+  background: rgba(255, 201, 60, 0.12);
+  animation: perfect-glow 1.6s ease-in-out infinite;
+}
+
+.perfect__title {
+  margin: 0 0 6px;
+  direction: ltr;
+  font-family: var(--arcade);
+  font-size: clamp(13px, 4.6vw, 17px);
+  line-height: 1.5;
+  color: var(--gold);
+}
+
+.perfect__sub {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+@keyframes perfect-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(255, 201, 60, 0);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 201, 60, 0.45);
+    transform: scale(1.02);
+  }
+}
+
+/* ------------------------------------------------------------------
+   DATE SHOP
+------------------------------------------------------------------ */
+.shop__head {
+  text-align: center;
+}
+
+.budget {
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 201, 60, 0.4);
+  background: rgba(255, 201, 60, 0.12);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--card-line);
+  background: var(--card);
+  text-align: start;
+  transition: transform 0.14s ease, border-color 0.2s ease, background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.item:active {
+  transform: scale(0.985);
+}
+
+.item__emoji {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.item__name {
+  display: block;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.item__note {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.item__price {
+  flex: none;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.item.is-picked {
+  border-color: var(--pink);
+  background: rgba(255, 45, 120, 0.18);
+  box-shadow: 0 0 24px -6px rgba(255, 45, 120, 0.6);
+}
+
+.item.is-picked .item__name::after {
+  content: ' ✓';
+  color: var(--pink-soft);
+}
+
+.item.is-poor {
+  opacity: 0.5;
+}
+
+/* ההפתעה — נעולה עד 100 מטבעות, ואז זוהרת */
+.item--surprise {
+  border-color: rgba(255, 201, 60, 0.4);
+}
+
+.item--surprise.is-unlocked {
+  border-color: var(--gold);
+  background: linear-gradient(120deg, rgba(255, 201, 60, 0.2), rgba(255, 45, 120, 0.2));
+  animation: perfect-glow 1.8s ease-in-out infinite;
+}
+
+.item--surprise.is-locked .item__emoji::after {
+  content: '🔒';
+  margin-inline-start: 4px;
+  font-size: 16px;
+}
+
+/* דייט בלעדיי — לחיץ תמיד, נרכש לעולם לא */
+.item--impossible {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.25);
+  opacity: 0.75;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+
+/* ------------------------------------------------------------------
+   סל הדייט
+------------------------------------------------------------------ */
+.basket {
+  margin-top: 4px;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 45, 120, 0.4);
+  background: rgba(255, 45, 120, 0.1);
+}
+
+.basket__title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.basket__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.basket__list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.basket__list .basket__empty {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.basket__remove {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.basket__totals {
+  margin: 12px 0 14px;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+/* ------------------------------------------------------------------
+   בחירת שעה
+------------------------------------------------------------------ */
+.screen--time {
+  text-align: center;
+}
+
+.time__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.time__lead {
+  margin: 0;
+  font-size: 17px;
+  color: var(--muted);
+}
+
+.time__options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 10px;
+}
+
+.time-btn {
+  width: 100%;
+  min-height: 62px;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-line);
+  background: var(--card);
+  font-family: var(--arcade);
+  font-size: 18px;
+  color: var(--text);
+  transition: transform 0.14s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.time-btn:active {
+  transform: scale(0.97);
+  border-color: var(--pink);
+  background: rgba(255, 45, 120, 0.22);
+}
+
+/* ------------------------------------------------------------------
+   DATE TICKET
+------------------------------------------------------------------ */
+.screen--ticket {
+  justify-content: center;
+}
+
+.ticket {
+  position: relative;
+  padding: 22px 20px 26px;
+  border-radius: 22px;
+  background: linear-gradient(165deg, #fff6ef 0%, #ffe3ee 100%);
+  color: #2b1030;
+  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.8);
+  animation: ticket-in 0.6s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+@keyframes ticket-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px) rotate(-2deg) scale(0.94);
+  }
+}
+
+.ticket__title {
+  margin: 0 0 16px;
+  direction: ltr;
+  font-family: var(--arcade);
+  font-size: clamp(13px, 4.4vw, 17px);
+  line-height: 1.6;
+  text-align: center;
+  color: var(--pink-deep);
+}
+
+.ticket__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.ticket__row b {
+  font-family: var(--arcade);
+  font-size: 11px;
+  color: #8a2a5c;
+}
+
+.ticket__row span {
+  font-weight: 900;
+}
+
+/* קו הניתוק המנוקב */
+.ticket__rip {
+  position: relative;
+  height: 22px;
+  margin: 16px -20px;
+  border-top: 2px dashed rgba(139, 42, 92, 0.4);
+}
+
+.ticket__rip::before,
+.ticket__rip::after {
+  content: '';
+  position: absolute;
+  top: -13px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.ticket__rip::before {
+  inset-inline-start: -12px;
+}
+
+.ticket__rip::after {
+  inset-inline-end: -12px;
+}
+
+.ticket__plan-label {
+  margin: 0 0 8px;
+  font-family: var(--arcade);
+  font-size: 11px;
+  color: #8a2a5c;
+}
+
+.ticket__plan {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ticket__plan li {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 45, 120, 0.14);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.ticket__closing {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--pink-deep);
+}
+
+/* ------------------------------------------------------------------
+   כפתור השתקה, חלונית הודעה, קונפטי
+------------------------------------------------------------------ */
+.mute {
+  position: absolute;
+  top: calc(10px + var(--safe-t));
+  left: 12px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(20, 8, 34, 0.6);
+  border: 1px solid var(--card-line);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.mute[hidden],
+.modal[hidden] {
+  display: none;
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(9, 4, 16, 0.7);
+  backdrop-filter: blur(3px);
+  animation: fade-in 0.2s ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.modal__card {
+  width: 100%;
+  max-width: 340px;
+  padding: 22px 20px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-line);
+  background: linear-gradient(165deg, #2a1140, #1b0a2e);
+  text-align: center;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9);
+  animation: pop-in 0.28s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.92);
+  }
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.modal__sub {
+  margin: 8px 0 18px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.modal__sub:empty {
+  display: none;
+}
+
+.fx {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   מי שביקש פחות תנועה, מקבל פחות תנועה
+------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .btn--start,
+  .perfect,
+  .item--surprise.is-unlocked,
+  .demo__runner,
+  .demo__coin {
+    animation: none;
+  }
+
+  .screen,
+  .ticket,
+  .modal__card {
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+  }
+}

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover + maximum-scale=1: מסך מלא באייפון, בלי זום בדאבל-טאפ -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#12071f" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="A very serious dating game." />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%AA%99%3C/text%3E%3C/svg%3E"
+    />
+
+    <meta property="og:title" content="DATE RUN 🪙" />
+    <meta property="og:description" content="A very serious dating game." />
+    <meta property="og:type" content="website" />
+
+    <title>DATE RUN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Heebo:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <!--
+      כל המשחק חי בתוך מסגרת אחת בגובה המסך. במחשב היא נראית כמו טלפון,
+      בטלפון היא פשוט המסך. אף מסך לא גולל את הדף עצמו.
+    -->
+    <div class="app" id="app">
+      <!-- ============================ מסך פתיחה ============================ -->
+      <section class="screen screen--start" id="screen-start">
+        <div class="start__middle">
+          <h1 class="logo">
+            <span class="logo__line" data-text="start.title1"></span>
+            <span class="logo__line logo__line--2" data-text="start.title2"></span>
+          </h1>
+          <p class="logo__icons" data-text="start.icons"></p>
+          <button class="btn btn--start" id="btn-start" data-text="start.play"></button>
+        </div>
+        <p class="tagline" data-text="start.tagline"></p>
+      </section>
+
+      <!-- ============================ מסך הוראות ============================ -->
+      <section class="screen screen--howto" id="screen-howto">
+        <div class="howto__body">
+          <h2 class="title" data-text="howto.title"></h2>
+
+          <div class="panel">
+            <p class="panel__lead" data-text="howto.main"></p>
+          </div>
+
+          <div class="panel panel--tip">
+            <p class="tip__label" data-text="howto.tipLabel"></p>
+            <p class="tip__text" data-text="howto.tip"></p>
+          </div>
+
+          <div class="howto__demo">
+            <p class="howto__hint" data-text="howto.hint"></p>
+            <div class="demo" aria-hidden="true">
+              <span class="demo__runner">🏃‍♀️</span>
+              <span class="demo__coin">🪙</span>
+              <span class="demo__floor"></span>
+            </div>
+            <p class="howto__hint howto__hint--small" data-text="howto.hintDesktop"></p>
+          </div>
+        </div>
+        <button class="btn btn--primary" id="btn-go" data-text="howto.go"></button>
+      </section>
+
+      <!-- ============================== המשחק ============================== -->
+      <section class="screen screen--game" id="screen-game">
+        <canvas id="game" class="game-canvas"></canvas>
+
+        <div class="hud">
+          <div class="hud__coins">🪙 <bdi><span id="hud-count">0</span>/<span id="hud-total">100</span></bdi></div>
+          <div class="hud__bar"><i id="hud-progress"></i></div>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- ============================ מסך סיום ============================ -->
+      <section class="screen screen--finish" id="screen-finish">
+        <div class="finish__body">
+          <h2 class="finish__title" data-text="finish.title"></h2>
+          <p class="finish__score" id="finish-score"></p>
+
+          <div class="perfect" id="perfect-block" hidden>
+            <p class="perfect__title" data-text="finish.perfectTitle"></p>
+            <p class="perfect__sub" data-text="finish.perfectSub"></p>
+          </div>
+        </div>
+        <button class="btn btn--primary" id="btn-shop" data-text="finish.toShop"></button>
+      </section>
+
+      <!-- ============================ DATE SHOP ============================ -->
+      <section class="screen screen--shop screen--scroll" id="screen-shop">
+        <header class="shop__head">
+          <h2 class="title title--arcade" data-text="shop.title"></h2>
+          <p class="budget" id="budget"></p>
+        </header>
+
+        <!-- הפריטים הרגילים, מתוך CONFIG.shop.items -->
+        <ul class="items" id="shop-items"></ul>
+
+        <!-- ההפתעה (100 מטבעות) והאופציה הבלתי אפשרית -->
+        <ul class="items" id="shop-specials"></ul>
+
+        <section class="basket" id="basket">
+          <h3 class="basket__title" data-text="shop.basketTitle"></h3>
+          <ul class="basket__list" id="basket-list"></ul>
+          <p class="basket__totals" id="basket-totals"></p>
+          <button class="btn btn--primary" id="btn-confirm" disabled data-text="shop.confirm"></button>
+        </section>
+      </section>
+
+      <!-- ============================ בחירת שעה ============================ -->
+      <section class="screen screen--time" id="screen-time">
+        <div class="time__body">
+          <p class="time__lead" data-text="time.title"></p>
+          <h2 class="title" data-text="time.question"></h2>
+          <div class="time__options" id="time-options"></div>
+        </div>
+      </section>
+
+      <!-- =========================== DATE TICKET =========================== -->
+      <section class="screen screen--ticket screen--scroll" id="screen-ticket">
+        <div class="ticket" id="ticket">
+          <h2 class="ticket__title" data-text="ticket.title"></h2>
+          <div class="ticket__rows" id="ticket-rows"></div>
+          <div class="ticket__rip" aria-hidden="true"></div>
+          <p class="ticket__plan-label" data-text="ticket.plan"></p>
+          <ul class="ticket__plan" id="ticket-plan"></ul>
+          <p class="ticket__closing" data-text="ticket.closing"></p>
+        </div>
+      </section>
+
+      <!-- כפתור השתקה — מופיע רק מרגע שהסאונד נדלק (אחרי START) -->
+      <button class="mute" id="btn-mute" hidden aria-label="סאונד">🔊</button>
+
+      <!-- חלונית ההודעות של החנות -->
+      <div class="modal" id="modal" hidden>
+        <div class="modal__card" role="dialog" aria-modal="true">
+          <p class="modal__title" id="modal-title"></p>
+          <p class="modal__sub" id="modal-sub"></p>
+          <button class="btn btn--ghost" id="modal-ok"></button>
+        </div>
+      </div>
+
+      <!-- קונפטי — שכבה עליונה שלא תופסת לחיצות -->
+      <canvas id="fx" class="fx"></canvas>
+    </div>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
