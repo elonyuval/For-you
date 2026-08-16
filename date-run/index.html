@@ -30,7 +30,12 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="./style.css" />
+    <!--
+      ?v= הוא שובר-cache. אין כאן build שמוסיף hash לשמות הקבצים, ובלי זה
+      ספארי ממשיך להגיש את ה-CSS וה-JS הישנים גם אחרי פריסה חדשה.
+      >>> להעלות את המספר בכל שינוי ב-style.css או ב-script.js. <<<
+    -->
+    <link rel="stylesheet" href="./style.css?v=2" />
   </head>
 
   <body>
@@ -162,6 +167,6 @@
       <canvas id="fx" class="fx"></canvas>
     </div>
 
-    <script src="./script.js" defer></script>
+    <script src="./script.js?v=2" defer></script>
   </body>
 </html>
