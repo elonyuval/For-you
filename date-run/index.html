@@ -127,15 +127,6 @@
         </section>
       </section>
 
-      <!-- ============================ בחירת שעה ============================ -->
-      <section class="screen screen--time" id="screen-time">
-        <div class="time__body">
-          <p class="time__lead" data-text="time.title"></p>
-          <h2 class="title" data-text="time.question"></h2>
-          <div class="time__options" id="time-options"></div>
-        </div>
-      </section>
-
       <!-- =========================== DATE TICKET =========================== -->
       <section class="screen screen--ticket screen--scroll" id="screen-ticket">
         <div class="ticket" id="ticket">
@@ -144,6 +135,13 @@
           <div class="ticket__rip" aria-hidden="true"></div>
           <p class="ticket__plan-label" data-text="ticket.plan"></p>
           <ul class="ticket__plan" id="ticket-plan"></ul>
+
+          <!-- אין תאריך ואין שעה — הכרטיס עצמו הוא הקופון -->
+          <div class="coupon">
+            <p class="coupon__title" data-text="ticket.coupon"></p>
+            <p class="coupon__sub" data-text="ticket.couponSub"></p>
+          </div>
+
           <p class="ticket__closing" data-text="ticket.closing"></p>
         </div>
       </section>

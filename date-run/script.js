@@ -21,10 +21,8 @@ const CONFIG = {
     hitPenalty: 5, // כמה מטבעות יורדים על פגיעה במכשול. 0 = בלי קנס
   },
 
-  /* פרטי הדייט */
+  /* מי משחק. אין כאן תאריך ושעה בכוונה — הכרטיס בסוף הוא קופון פתוח */
   date: {
-    day: 'שישי',
-    times: ['22:00', '22:30', '23:00'],
     player1: 'את',
     player2: 'אני',
   },
@@ -99,17 +97,13 @@ const CONFIG = {
       alone: ['אין לך מספיק מטבעות.', 'אמרתי שאין.', 'את באמת ממשיכה לנסות?', 'אני מתחיל להיעלב.'],
       aloneSub: 'וגם לא יהיה לך לעולם.',
     },
-    time: {
-      title: 'כמעט סיימנו…',
-      question: 'באיזו שעה?',
-    },
     ticket: {
       title: '🎟️ DATE TICKET',
       p1: 'PLAYER 1',
       p2: 'PLAYER 2',
-      day: 'יום',
-      hour: 'שעה',
       plan: 'תוכנית',
+      coupon: '📸 תצלמי מסך',
+      couponSub: 'וזה קופון פתוח — למתי שתרצי',
       closing: 'קבענו. בלי איחורים 😌',
     },
     /* ההומור במהלך הריצה. לא להגזים בכמות — יש cooldown של 2.6 שניות. */
@@ -154,7 +148,6 @@ const CONFIG = {
     perfect: false,
     basket: [], // מזהי פריטים, לפי סדר הבחירה
     surprise: false,
-    time: null,
     aloneTries: 0,
   };
 
@@ -1079,34 +1072,14 @@ const CONFIG = {
   })();
 
   /* ================================================================
-     בחירת שעה + הכרטיס
+     הכרטיס
      ================================================================ */
-  function openTime() {
-    const wrap = $('#time-options');
-    wrap.innerHTML = '';
-    CONFIG.date.times.forEach((time) => {
-      const btn = document.createElement('button');
-      btn.className = 'time-btn';
-      btn.type = 'button';
-      btn.innerHTML = `<bdi>${time}</bdi>`;
-      btn.addEventListener('click', () => {
-        state.time = time;
-        Sound.buy();
-        openTicket();
-      });
-      wrap.appendChild(btn);
-    });
-    show('#screen-time');
-  }
-
   function openTicket() {
     const rows = $('#ticket-rows');
     rows.innerHTML = '';
     const data = [
       [T.ticket.p1, CONFIG.date.player1],
       [T.ticket.p2, CONFIG.date.player2],
-      [T.ticket.day, CONFIG.date.day],
-      [T.ticket.hour, state.time],
     ];
     data.forEach(([label, value]) => {
       const row = document.createElement('div');
@@ -1169,7 +1142,7 @@ const CONFIG = {
     $('#btn-shop').addEventListener('click', () => Shop.open());
     $('#btn-confirm').addEventListener('click', () => {
       Sound.buy();
-      openTime();
+      openTicket();
     });
 
     $('#btn-mute').addEventListener('click', () => {

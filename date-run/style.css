@@ -715,56 +715,6 @@ button {
 }
 
 /* ------------------------------------------------------------------
-   בחירת שעה
------------------------------------------------------------------- */
-.screen--time {
-  text-align: center;
-}
-
-.time__body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  width: 100%;
-}
-
-.time__lead {
-  margin: 0;
-  font-size: 17px;
-  color: var(--muted);
-}
-
-.time__options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  max-width: 320px;
-  margin-top: 10px;
-}
-
-.time-btn {
-  width: 100%;
-  min-height: 62px;
-  border-radius: var(--radius);
-  border: 1px solid var(--card-line);
-  background: var(--card);
-  font-family: var(--arcade);
-  font-size: 18px;
-  color: var(--text);
-  transition: transform 0.14s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.time-btn:active {
-  transform: scale(0.97);
-  border-color: var(--pink);
-  background: rgba(255, 45, 120, 0.22);
-}
-
-/* ------------------------------------------------------------------
    DATE TICKET
 ------------------------------------------------------------------ */
 .screen--ticket {
@@ -871,6 +821,30 @@ button {
   background: rgba(255, 45, 120, 0.14);
   font-size: 15px;
   font-weight: 900;
+}
+
+/* הקופון — במקום התאריך והשעה שהיו כאן */
+.coupon {
+  margin-top: 18px;
+  padding: 14px 12px;
+  border: 2px dashed rgba(139, 42, 92, 0.45);
+  border-radius: 14px;
+  background: rgba(255, 45, 120, 0.07);
+  text-align: center;
+}
+
+.coupon__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 900;
+  color: #8a2a5c;
+}
+
+.coupon__sub {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #a8557e;
 }
 
 .ticket__closing {
